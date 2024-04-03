@@ -1,4 +1,4 @@
-import time
+import datetime as dt
 
 def main():
     tasks = {}
@@ -16,80 +16,89 @@ def main():
     }
 
     def commands_print():
+        """prints all commands"""
 
-        print(f"\n-----------------------------")
+        print(f"\n-----------------------------------------------")
 
         for command, meaning in commands.items():
             print(f"\n{command}: {meaning}")
-        print(f"\nwrite 'stop' while making a new tasks to cancel ")
+        print(f"\nwrite 'cancel' while making a new tasks to cancel ")
             
-        print(f"\n-----------------------------\n")
+        print(f"\n-----------------------------------------------\n")
 
     commands_print()
 
     def current_date():
-        date_now = time.localtime()
-        year = (date_now.tm_year)
-        month = (date_now.tm_mon)
-        day = (date_now.tm_mday)
 
-        print(f"{year}-{month}-{day}")
+        today = dt.date.today()
+        year = (today.year)
+        month = (today.month)
+        day = (today.day)
+
+        date_now = f"{year}-{month:02d}-{day:02d}" #:02d makes integers from 1 to 9 have leading zeroes 
+
+    def days_left(future):
+
+        future = future.split("-")
+        year = int(future[0])
+        month = int(future[1])
+        day = int(future[2])
+        future = dt.date(year, month, day)
+        today = dt.date.today()
+        diff = (future - today).days
+        return diff
+
+        
 
     while isactive:
-
 
         x = input()
 
         def get_task():
-            """the user gets to input a tasks and a deadline whick is stored in the tasks dict"""
-            task = input(f"\nWhat task would you like to write down? ").title()
-            if task == "Stop":
-                if tasks == True:
-                    del tasks[-1]
-                    remaining_tasks()
+            """the user gets to input a tasks and a deadline which is stored in the tasks dict"""
+
+            while 1:
+
+                task = input(f"\nWhat task would you like to write down? ").title()
+
+                if task == "Cancel":
+                    break
+
+                future = input(f"\nWhat is the deadline of the task? Format date as YYYY-MM-DD: ")
+
+
+                if future == "cancel":
+                    break
+
                 else:
-                    remaining_tasks()
-            task_date = input(f"\nWhat is the deadline of the task? ").lower()
-            if task_date == "stop":
-                if tasks == True:
-                    del tasks[-1]
-                    remaining_tasks()
-                else:
-                    remaining_tasks()
-            weekdays = {"mon" : "monday",
-                        "tue" : "tuesday",
-                        "wed" : "wednesday",
-                        "thu" : "thursday",
-                        "fri" : "friday",
-                        "sat" : "saturday",
-                        "sun" : "sunday"}
-        
-            if task_date in weekdays:
-                task_date = weekdays[task_date]
-                tasks[task] = task_date
-            else:
-                tasks[task] = task_date
+                    tasks[task] = future
+                    break
+
+            remaining_tasks()
+    
 
 
         def remaining_tasks():
             """ shows the remaining tasks"""
 
-            if bool(tasks) == True:
+            if tasks:
 
                 task_number = 1
 
-                print(f"\n-----------------------------\n")
+                print(f"\n-----------------------------------------------\n")
 
-                for task, task_date in tasks.items():
-                    print(f"{task_number}. {task} is due to {task_date}") #add how many days are left
+                for task, future in tasks.items():
+
+                    difference = days_left(future)
+                    print(f"{task_number}. {task} is due to {future} | {difference} days left.")
                     task_number += 1
 
-                print(f"\n-----------------------------\n") #the lines should seperate tasks based on due days
+                print(f"\n-----------------------------------------------\n") 
             
             else:
-                print(f"\n-----------------------------\n")
+                print(f"\n-----------------------------------------------\n")
                 print(f"No tasks due. ")
-                print(f"\n-----------------------------\n")
+                print(f"\n-----------------------------------------------\n")
             
 
         if x == "new":
@@ -122,5 +131,7 @@ def main():
 
 main()
 
-#date isn't properly formated ####-##-##
-#writing the same tasks but on different days doesn't work
+
+# writing the same tasks but on different days doesn't work
+# should be able to enter the tasks number to mark it as done
+# --- lines should seperate tasks based on due days
