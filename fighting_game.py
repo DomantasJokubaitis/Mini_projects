@@ -19,9 +19,9 @@ class Character:
 
         if critical_chance > 85:
             self.damage = round(self.damage * 1.5)
-            print("Critical hit! ")
+            print(f"Critical hit! -{self.damage} hp")
         else:
-            print("Regular attack ")
+            print(f"Regular attack -{self.damage} hp")
 
         return self.damage
         
@@ -84,7 +84,7 @@ while ai_character.health > 0 and my_character.health > 0:
     elif move == "body slam":
         ai_character.body_slam()
     else:
-        print(f"\nNot a legal move! Disqualified! ")
+        print(f"\nNot a legal move! {name} is disqualified! ")
         break
     if ai_character.health > 0:
         ai_move = random.randint(1,3)
@@ -107,14 +107,20 @@ if my_character.health == 0:
 # Ai can attack after it's health drops down to zero on the same turn (fixed)
 
 ###features###
+##By importance, starting from the top##
 
-# Critical hits(done)
-# Show damage dealt as -##
-# Healing (limited use)
-# Stamina
-# Store date about fight in json file
-# Skillpoints?
+# Critical hits(DONE)
+# Show damage dealt as -##(DONE)
+# Instead of attack failing, should be enemy dodged attack
+# Dynamic stamina system, attacks drain stamina, can be recharged by skipping turn
+# Healing (limited use, maybe potion?)
+# Store data about fight, like moves commited, in a file
+# Skillpoints? Like strength, endurance.
 # Ai hardness?
+
+###Swords and sandals ugly copy LOL
+
+
 
 
 
