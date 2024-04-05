@@ -27,7 +27,9 @@ class Character:
         
     def show_hp(self, defender):
         """shows the defenders health"""
-        print(f"{defender.name} health: {defender.health}")
+        print("|-------------------|")
+        print(f"| {defender.name} health: {defender.health} hp |")
+        print("|-------------------|")
 
     def attack(self, attacker, defender, attack_name, fail_chance, min_damage, max_damage):
         """generates a random number from 1 to 100, if that number is bigger than the fail chance, damage is dealt to defender"""
@@ -46,7 +48,7 @@ class Character:
                 self.show_hp(defender)
 
         else:
-            print(f"\n{attack_name} attack failed! ")
+            print(f"\n{defender.name} dodged the {attack_name.lower()} attack! ")
             self.show_hp(defender)
 
     def punch(self):
@@ -69,7 +71,9 @@ class Character:
         self.attack(ai_character, my_character, "Body slam", 75, 45, 65)
 
 
-name = input("Enter your characters nickname: ")
+name = input("Enter your characters nickname: ").title()
+while len(name) > 20:
+    name = input("The name must be, at max, 20 characters long. Try again: ")
 
 my_character = Character(name)
 ai_character = Character("AI")
@@ -111,11 +115,14 @@ if my_character.health == 0:
 
 # Critical hits(DONE)
 # Show damage dealt as -##(DONE)
-# Instead of attack failing, should be enemy dodged attack
+# Instead of attack failing, should be enemy dodged attack(DONE)
+# When choosing move, show attack success rate percentage and possible damage dealt
+# Play again, save name
+# Dynamic dashes (----) highlighting hp, for longer names, more dashes should be printed, the hp also should be in a box
 # Dynamic stamina system, attacks drain stamina, can be recharged by skipping turn
 # Healing (limited use, maybe potion?)
 # Store data about fight, like moves commited, in a file
-# Skillpoints? Like strength, endurance.
+# Skillpoints? Like strength, endurance
 # Ai hardness?
 
 ###Swords and sandals ugly copy LOL
