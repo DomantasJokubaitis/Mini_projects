@@ -17,68 +17,47 @@ class Character:
         if critical_chance > 85:
             self.damage = round(self.damage * 1.5)
             print("Critical hit! ")
-            return self.damage
         else:
             print("Regular attack ")
-            return self.damage
+        return self.damage
         
-    def show_my_hp(self):
-        print(f"Your health: {my_character.health}")
+    def show_hp(self, defender):
+        print(f"{defender.name} health: {defender.health}")
 
-    def show_ai_hp(self):
-        print(f"Ai health: {ai_character.health}")
-
-    def attack(self, attack_name, fail_chance, min_damage, max_damage):
+    def attack(self, attacker, defender, attack_name, fail_chance, min_damage, max_damage):
         chance = random.randint(0, 100)
         if chance > fail_chance:
-            print(f"\n{attack_name} attack succesful! ")
+            print(f"\n{attacker.name} used {attack_name}! ")
             damage = random.randint(min_damage, max_damage)
             self.critical_hit(damage)
-            ai_character.health_lowering(self.damage)
-            if ai_character.health < 0:
-                ai_character.health = 0
-                self.show_ai_hp()
+            defender.health_lowering(self.damage)
+            if defender.health < 0:
+                defender.health = 0
+                self.show_hp(defender)
             else:
-                self.show_ai_hp()
+                self.show_hp(defender)
         else:
             print(f"\n{attack_name} attack failed! ")
-            self.show_ai_hp()
+            self.show_hp(defender)
 
     def punch(self):
-        self.attack("Punch", 20, 10, 20)
+        self.attack(my_character, ai_character, "Punch", 20, 10, 20)
 
     def kick(self):
-        self.attack("Kick", 50, 25, 35)
+        self.attack(my_character, ai_character, "Kick", 50, 25, 35)
 
     def body_slam(self):
-        self.attack("Body slam", 75, 45, 65)
+        self.attack(my_character, ai_character,"Body slam", 75, 45, 65)
 
-
-    def aiattack(self, attack_name, fail_chance, min_damage, max_damage):
-
-        chance = random.randint(0, 100)
-        if chance > fail_chance:
-            print(f"\nAi chose {attack_name}! ")
-            damage = random.randint(min_damage, max_damage)
-            self.critical_hit(damage)
-            my_character.health_lowering(self.damage)
-            if my_character.health < 0:
-                my_character.health = 0
-                self.show_my_hp()
-            else:
-                self.show_my_hp()
-        else:
-            print(f"\nAi attack failed! ")
-            self.show_my_hp()
 
     def aipunch(self):
-        self.aiattack("Punch", 20, 10, 20)
+        self.attack(ai_character, my_character, "Punch", 20, 10, 20)
 
     def aikick(self):
-        self.aiattack("Kick", 50, 25, 35)
+        self.attack(ai_character, my_character, "Kick", 50, 25, 35)
 
     def aibody_slam(self):
-        self.aiattack("Body slam", 75, 45, 65)
+        self.attack(ai_character, my_character, "Body slam", 75, 45, 65)
 
 
 name = input("Enter your characters nickname: ")
@@ -102,9 +81,9 @@ while ai_character.health > 0 and my_character.health > 0:
         ai_move = random.randint(1,3)
         if ai_move == 1:
             my_character.aipunch()
-        if ai_move == 2:
+        elif ai_move == 2:
             my_character.aikick()
-        if ai_move == 3:
+        elif ai_move == 3:
             my_character.aibody_slam()
     
 
