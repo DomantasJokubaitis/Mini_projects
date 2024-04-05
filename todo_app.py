@@ -131,7 +131,10 @@ def main():
 
 main()
 
-
+"""currently pretty shitty, will come back to it"""
+#
+#
+#
 # writing the same tasks but on different days doesn't work
 # should be able to enter the tasks number to mark it as done
 # --- lines should seperate tasks based on due days

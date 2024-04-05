@@ -9,33 +9,42 @@ class Character:
 
 
     def health_lowering(self, damage):
+        """lowers the defenders health by damage dealt"""
         self.health -= damage
 
     def critical_hit(self, damage):
+        """small chance for critical hit, which increases damage dealt 1.5 times"""
         self.damage = damage
         critical_chance = random.randint(1, 100)
+
         if critical_chance > 85:
             self.damage = round(self.damage * 1.5)
             print("Critical hit! ")
         else:
             print("Regular attack ")
+
         return self.damage
         
     def show_hp(self, defender):
+        """shows the defenders health"""
         print(f"{defender.name} health: {defender.health}")
 
     def attack(self, attacker, defender, attack_name, fail_chance, min_damage, max_damage):
+        """generates a random number from 1 to 100, if that number is bigger than the fail chance, damage is dealt to defender"""
         chance = random.randint(0, 100)
+
         if chance > fail_chance:
             print(f"\n{attacker.name} used {attack_name}! ")
             damage = random.randint(min_damage, max_damage)
             self.critical_hit(damage)
             defender.health_lowering(self.damage)
+
             if defender.health < 0:
                 defender.health = 0
                 self.show_hp(defender)
             else:
                 self.show_hp(defender)
+
         else:
             print(f"\n{attack_name} attack failed! ")
             self.show_hp(defender)
