@@ -120,6 +120,7 @@ if my_character.health == 0:
 # Play again, save name
 # Dynamic dashes (----) highlighting hp, for longer names, more dashes should be printed, the hp also should be in a box
 # Dynamic stamina system, attacks drain stamina, can be recharged by skipping turn
+# Lithuanian language, input change_language or smth to change language
 # Healing (limited use, maybe potion?)
 # Store data about fight, like moves commited, in a file
 # Skillpoints? Like strength, endurance
