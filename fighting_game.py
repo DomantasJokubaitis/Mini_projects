@@ -11,12 +11,11 @@ class Character:
     def health_lowering(self, damage):
         self.health -= damage
 
-    def punch(self):
-
+    def attack(self, attack_name, fail_chance, min_damage, max_damage):
         chance = random.randint(0, 100)
-        if chance > 20:
-            print("Attack succesful! ")
-            damage = random.randint(10, 20)
+        if chance > fail_chance:
+            print(f"{attack_name} attack succesful! ")
+            damage = random.randint(min_damage, max_damage)
             ai_character.health_lowering(damage)
             if ai_character.health < 0:
                 ai_character.health = 0
@@ -24,87 +23,44 @@ class Character:
             else:
                 print(f"Ai health: {ai_character.health}")
         else:
-            print("Attack failed! ")
+            print(f"{attack_name} attack failed! ")
             print(f"Ai health: {ai_character.health}")
+
+    def punch(self):
+        self.attack("Punch", 20, 10, 20)
 
     def kick(self):
-        chance = random.randint(0, 100)
-        if chance > 50:
-            print("Attack succesful! ")
-            damage = random.randint(20, 35)
-            ai_character.health_lowering(damage)
-            if ai_character.health < 0:
-                ai_character.health = 0
-                print(f"Ai health: {ai_character.health}")
-            else:
-                print(f"Ai health: {ai_character.health}")
-        else:
-            print("Attack failed! ")
-            print(f"Ai health: {ai_character.health}")
+        self.attack("Kick", 50, 20, 35)
 
     def body_slam(self):
+        self.attack("Body slam", 75, 45, 65)
+
+    def aiattack(self, attack_name, fail_chance, min_damage, max_damage):
+
         chance = random.randint(0, 100)
-        if chance > 75:
-            print("Attack succesful! ")
-            damage = random.randint(40, 65)
-            ai_character.health_lowering(damage)
-            if ai_character.health < 0:
-                ai_character.health = 0
-                print(f"Ai health: {ai_character.health}")
+        if chance > fail_chance:
+            print(f"Ai chose {attack_name}! ")
+            damage = random.randint(min_damage, max_damage)
+            my_character.health_lowering(damage)
+            if my_character.health < 0:
+                my_character.health = 0
+                print(f"Your health: {my_character.health}")
             else:
-                print(f"Ai health: {ai_character.health}")
+                print(f"Your health: {my_character.health}")
         else:
-            print("Attack failed! ")
-            print(f"Ai health: {ai_character.health}")
+            print("Ai attack failed! ")
+            print(f"Your health: {my_character.health}")
 
     def aipunch(self):
-
-        chance = random.randint(0, 100)
-        if chance > 20:
-            print("Ai chose punch! ")
-            damage = random.randint(10, 20)
-            my_character.health_lowering(damage)
-            if my_character.health < 0:
-                my_character.health = 0
-                print(f"Your health: {my_character.health}")
-            else:
-                print(f"Your health: {my_character.health}")
-        else:
-            print("Ai attack failed! ")
-            print(f"Your health: {my_character.health}")
+        self.aiattack("Punch", 20, 10, 20)
 
     def aikick(self):
-        chance = random.randint(0, 100)
-        if chance > 50:
-            print("Ai chose kick! ")
-            damage = random.randint(20, 35)
-            my_character.health_lowering(damage)
-            if my_character.health < 0:
-                my_character.health = 0
-                print(f"Your health: {my_character.health}")
-            else:
-                print(f"Your health: {my_character.health}")
-        else:
-            print("Ai attack failed! ")
-            print(f"Your health: {my_character.health}")
+        self.aiattack("Kick", 50, 20, 35)
 
     def aibody_slam(self):
-        chance = random.randint(0, 100)
-        if chance > 75:
-            print("Ai chose body slam! ")
-            damage = random.randint(40, 65)
-            my_character.health_lowering(damage)
-            if my_character.health < 0:
-                my_character.health = 0
-                print(f"Your health: {my_character.health}")
-            else:
-                print(f"Your health: {my_character.health}")
-        else:
-            print("Ai attack failed! ")
-            print(f"Your health: {my_character.health}")
+        self.aiattack("Body slam", 75, 45, 65)
 
 
-    
 name = input("Enter your characters nickname: ")
 
 my_character = Character(name)
@@ -113,7 +69,6 @@ ai_character = Character("AI")
 while ai_character.health > 0 and my_character.health > 0:
 
     move = input(f"\nPunch, kick or body slam: ").lower()
-    ai_move = random.randint(1,3)
     if move == "punch":
         ai_character.punch()
     elif move == "kick":
@@ -123,12 +78,14 @@ while ai_character.health > 0 and my_character.health > 0:
     else:
         print(f"\nNot a legal move! Disqualified! ")
         break
-    if ai_move == 1:
-        my_character.aipunch()
-    if ai_move == 2:
-        my_character.aikick()
-    if ai_move == 3:
-        my_character.aibody_slam()
+    if ai_character.health > 0:
+        ai_move = random.randint(1,3)
+        if ai_move == 1:
+            my_character.aipunch()
+        if ai_move == 2:
+            my_character.aikick()
+        if ai_move == 3:
+            my_character.aibody_slam()
     
 
 if ai_character.health == 0:
@@ -136,6 +93,11 @@ if ai_character.health == 0:
 
 if my_character.health == 0:
     print(f"\nAi wins! ")
+
+###bugs###
+
+# Ai can attack after it's health drops down to zero on the same turn (fixed)
+
 
 
 
