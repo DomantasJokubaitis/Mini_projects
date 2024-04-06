@@ -27,9 +27,12 @@ class Character:
         
     def show_hp(self, defender):
         """shows the defenders health"""
-        print("|-------------------|")
-        print(f"| {defender.name} health: {defender.health} hp |")
-        print("|-------------------|")
+        lines = round(defender.health * 0.4)
+        print(f"\n")
+        print(f"|{lines * "-"}|")
+        print(f"|{lines * "-"}|")
+
+        print(f"{defender.name} health: {defender.health} hp")
 
     def attack(self, attacker, defender, attack_name, fail_chance, min_damage, max_damage):
         """generates a random number from 1 to 100, if that number is bigger than the fail chance, damage is dealt to defender"""
@@ -118,13 +121,11 @@ if my_character.health == 0:
 # Instead of attack failing, should be enemy dodged attack(DONE)
 # When choosing move, show attack success rate percentage and possible damage dealt
 # Play again, save name
-# Dynamic dashes (----) highlighting hp, for longer names, more dashes should be printed, the hp also should be in a box
+# Dynamic dashes (----) highlighting hp(maybe better formating)(DONE)
 # Dynamic stamina system, attacks drain stamina, can be recharged by skipping turn
 # Lithuanian language, input change_language or smth to change language
 # Healing (limited use, maybe potion?)
 # Store data about fight, like moves commited, in a file
-# Skillpoints? Like strength, endurance
-# Ai hardness?
 
 ###Swords and sandals ugly copy LOL
 
