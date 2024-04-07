@@ -1,12 +1,15 @@
 import random
 import json
 from pathlib import Path
+import sys
 
 class Character:
 
     def __init__(self, name):
 
         self.name = name
+        if self.name == "":
+            self.name = "nameless"
         self.health = 100
 
 
@@ -68,11 +71,9 @@ class Character:
             path.write_text(content)
         else:
             my_stats_dict = {}
-            game_over_times = 0
+            game_over_times, losses, wins = 0, 0, 0
             game_over_times += game_end
-            losses = 0
             losses += loss
-            wins = 0
             wins += win
             my_stats_dict["game_over_times"] = game_over_times
             my_stats_dict["losses"] = losses
@@ -84,7 +85,7 @@ class Character:
         path = Path("stats.json")
         content = path.read_text()
         my_stats_dict = json.loads(content)
-        print(f"In total there were {my_stats_dict["game_over_times"]} games played. You won {my_stats_dict["wins"]} of them and lost {my_stats_dict["losses"]} of them. ")
+        print(f"\nIn total there were {my_stats_dict["game_over_times"]} games played. You won {my_stats_dict["wins"]} of them and lost {my_stats_dict["losses"]} of them. ")
 
          
 
@@ -115,11 +116,9 @@ while len(name) > 20:
 my_character = Character(name)
 ai_character = Character("AI")
 
+is_active = True
 
-
-def main():
-
-    is_active = True
+def main(is_active):
 
     while is_active == True:
 
@@ -134,6 +133,7 @@ def main():
                 ai_character.body_slam()
             else:
                 print(f"\nNot a legal move! {name} skips a turn! ")
+                ai_character.show_hp(ai_character)
             if ai_character.health > 0:
                 ai_move = random.randint(1,3)
                 if ai_move == 1:
@@ -150,11 +150,9 @@ def main():
                 choice = input("Play again? y/n: ").lower()
                 if choice == "y":
                     my_character.health, ai_character.health = 100, 100
-                    main()
+                    main(is_active)
                 elif choice == "n":
-                    is_active = False
-                    return is_active
-                    print("Bye")
+                    starting_screen()
 
             elif my_character.health == 0:
                 print(f"\nAi wins! ")
@@ -162,25 +160,31 @@ def main():
                 choice = input("Play again? y/n: ").lower()
                 if choice == "y":
                     my_character.health, ai_character.health = 100, 100
-                    main()
+                    main(is_active)
                 elif choice == "n":
-                    is_active = False
-                    return is_active
-                    print("Bye")
+                    starting_screen()
+
+    else:
+        print("Quitting...")
+        sys.exit()
+
+def starting_screen():
+    your_choice = input("Start game or view game stats? ").lower()
+    if your_choice == "stats":
+        my_character.info_reading()
+        your_choice = input(f"\n")
+    if your_choice == "start":
+        my_character.health, ai_character.health = 100, 100
+        is_active = True
+        main(is_active)
+    elif your_choice == "quit" or your_choice == "q":
+        is_active = False
+        main(is_active)
+    else:
+        print("Command was not recognised, restart the game! ")
 
 
-
-print("Start game or view game stats? ")
-your_choice = input().lower()
-if your_choice == "stats":
-    my_character.info_reading()
-    your_choice = input()
-if your_choice == "start":
-    main()
-elif your_choice == "quit" or your_choice == "q":
-    is_active = False
-else:
-    print("Command was not recognised, restart the game! ")
+starting_screen()
 
 
    
@@ -202,7 +206,7 @@ else:
 # Show damage dealt as -##(DONE)
 # Instead of attack failing, should be enemy dodged attack(DONE)
 # When choosing move, show attack success rate percentage and possible damage dealt
-# Play again, save name
+# Play again(DONE), save name
 # Dynamic dashes (----) highlighting hp(maybe better formating)(DONE)
 # Dynamic stamina system, attacks drain stamina, can be recharged by skipping turn
 # Lithuanian language, input change_language or smth to change language
