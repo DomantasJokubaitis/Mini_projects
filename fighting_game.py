@@ -1,4 +1,8 @@
 import random
+import json
+from pathlib import Path
+
+#C:/Users/Doman/Desktop/Python_work/NotBook
 
 class Character:
 
@@ -26,7 +30,7 @@ class Character:
         return self.damage
         
     def show_hp(self, defender):
-        """shows the defenders health"""
+        """shows the defenders health and a dynamic health bar"""
         lines = round(defender.health * 0.4)
         print(f"\n")
         print(f"|{lines * "-"}|")
@@ -53,6 +57,38 @@ class Character:
         else:
             print(f"\n{defender.name} dodged the {attack_name.lower()} attack! ")
             self.show_hp(defender)
+
+    def get_info(self, game_end = 0, loss = 0, win = 0):
+        path = Path("stats.json")
+        if path.exists():
+            content = path.read_text()
+            my_stats_dict = json.loads(content)
+            my_stats_dict["game_over_times"] += game_end
+            my_stats_dict["losses"] += loss
+            my_stats_dict["wins"] += win
+            content = json.dumps(my_stats_dict)
+            path.write_text(content)
+        else:
+            my_stats_dict = {}
+            game_over_times = 0
+            game_over_times += game_end
+            losses = 0
+            losses += loss
+            wins = 0
+            wins += win
+            my_stats_dict["game_over_times"] = game_over_times
+            my_stats_dict["losses"] = losses
+            my_stats_dict["wins"] = wins
+            content = json.dumps(my_stats_dict)
+            path.write_text(content)
+
+    def info_reading(self):
+        path = Path("stats.json")
+        content = path.read_text()
+        my_stats_dict = json.loads(content)
+        print(f"In total there were {my_stats_dict["game_over_times"]} games played. You won {my_stats_dict["wins"]} of them and lost {my_stats_dict["losses"]} of them. ")
+
+         
 
     def punch(self):
         self.attack(my_character, ai_character, "Punch", 20, 10, 20)
@@ -81,37 +117,85 @@ while len(name) > 20:
 my_character = Character(name)
 ai_character = Character("AI")
 
-while ai_character.health > 0 and my_character.health > 0:
 
-    move = input(f"\nPunch, kick or body slam: ").lower()
-    if move == "punch":
-        ai_character.punch()
-    elif move == "kick":
-        ai_character.kick()
-    elif move == "body slam":
-        ai_character.body_slam()
-    else:
-        print(f"\nNot a legal move! {name} is disqualified! ")
-        break
-    if ai_character.health > 0:
-        ai_move = random.randint(1,3)
-        if ai_move == 1:
-            my_character.aipunch()
-        elif ai_move == 2:
-            my_character.aikick()
-        elif ai_move == 3:
-            my_character.aibody_slam()
-    
 
-if ai_character.health == 0:
-    print(f"\n{name} wins! ")
+def main():
 
-if my_character.health == 0:
-    print(f"\nAi wins! ")
+    is_active = True
+
+    while is_active == True:
+
+        while ai_character.health > 0 and my_character.health > 0:
+
+            move = input(f"\nPunch, kick or body slam: ").lower()
+            if move == "punch":
+                ai_character.punch()
+            elif move == "kick":
+                ai_character.kick()
+            elif move == "body slam":
+                ai_character.body_slam()
+            else:
+                print(f"\nNot a legal move! {name} skips a turn! ")
+            if ai_character.health > 0:
+                ai_move = random.randint(1,3)
+                if ai_move == 1:
+                    my_character.aipunch()
+                elif ai_move == 2:
+                    my_character.aikick()
+                elif ai_move == 3:
+                    my_character.aibody_slam()
+            
+
+            if ai_character.health == 0:
+                print(f"\n{name} wins! ")
+                my_character.get_info(1, 0, 1)
+                choice = input("Play again? y/n: ").lower()
+                if choice == "y":
+                    my_character.health, ai_character.health = 100, 100
+                    main()
+                elif choice == "n":
+                    is_active = False
+                    return is_active
+                    print("Bye")
+
+            elif my_character.health == 0:
+                print(f"\nAi wins! ")
+                my_character.get_info(1, 1, 0)
+                choice = input("Play again? y/n: ").lower()
+                if choice == "y":
+                    my_character.health, ai_character.health = 100, 100
+                    main()
+                elif choice == "n":
+                    is_active = False
+                    return is_active
+                    print("Bye")
+
+
+
+print("Start game or view game stats? ")
+your_choice = input().lower()
+if your_choice == "stats":
+    my_character.info_reading()
+    your_choice = input()
+if your_choice == "start":
+    main()
+elif your_choice == "quit" or your_choice == "q":
+    is_active = False
+else:
+    print("Command was not recognised, restart the game! ")
+
+
+   
+###needs###
+# alot of repetitive code, need to use more functions
+# should ask start or stats first, not for character name, but i need the character name to create a character instance and use stats function
+# start or stats need prettier formating
+
 
 ###bugs###
 
 # Ai can attack after it's health drops down to zero on the same turn (fixed)
+# when choosing 'n' to end the game, for some reason it ends only when there is a print line after the 'return is_active' line
 
 ###features###
 ##By importance, starting from the top##
