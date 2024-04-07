@@ -2,8 +2,6 @@ import random
 import json
 from pathlib import Path
 
-#C:/Users/Doman/Desktop/Python_work/NotBook
-
 class Character:
 
     def __init__(self, name):
