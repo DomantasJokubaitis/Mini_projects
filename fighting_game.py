@@ -85,7 +85,7 @@ class Character:
         path = Path("stats.json")
         content = path.read_text()
         my_stats_dict = json.loads(content)
-        print(f"\nIn total there were {my_stats_dict["game_over_times"]} games played. You won {my_stats_dict["wins"]} of them and lost {my_stats_dict["losses"]} of them. ")
+        print(f"\nIn total {my_stats_dict["game_over_times"]} games were played. You won {my_stats_dict["wins"]} of them and lost {my_stats_dict["losses"]} of them. ")
 
          
 
@@ -108,10 +108,30 @@ class Character:
     def aibody_slam(self):
         self.attack(ai_character, my_character, "Body slam", 75, 45, 65)
 
+def get_name():
+    path = Path("character_name.json")
+    if path.exists():
+        content = path.read_text()
+        name = json.loads(content)
+        return name
+    else:
+        name = input("Enter your characters nickname: ").title()
+        while len(name) > 20:
+            name = input("The name can be, at max, 20 characters long. Try again: ")
+        content = json.dumps(name)
+        path.write_text(content)
+        return name
+    
+def change_name():
+    path = Path("character_name.json")
+    name = input("Enter your characters nickname: ").title()
+    while len(name) > 20:
+        name = input("The name can be, at max, 20 characters long. Try again: ")
+    content = json.dumps(name)
+    path.write_text(content)
+    return name
 
-name = input("Enter your characters nickname: ").title()
-while len(name) > 20:
-    name = input("The name must be, at max, 20 characters long. Try again: ")
+name = get_name()
 
 my_character = Character(name)
 ai_character = Character("AI")
@@ -132,7 +152,7 @@ def main(is_active):
             elif move == "body slam":
                 ai_character.body_slam()
             else:
-                print(f"\nNot a legal move! {name} skips a turn! ")
+                print(f"\nNot a legal move! {my_character.name} skips a turn! ")
                 ai_character.show_hp(ai_character)
             if ai_character.health > 0:
                 ai_move = random.randint(1,3)
@@ -145,7 +165,7 @@ def main(is_active):
             
 
             if ai_character.health == 0:
-                print(f"\n{name} wins! ")
+                print(f"\n{my_character.name} wins! ")
                 my_character.get_info(1, 0, 1)
                 choice = input("Play again? y/n: ").lower()
                 if choice == "y":
@@ -169,17 +189,22 @@ def main(is_active):
         sys.exit()
 
 def starting_screen():
-    your_choice = input("Start game or view game stats? ").lower()
-    if your_choice == "stats":
+    your_choice = input("Start game / game stats / change name / quit: ").lower()
+    if your_choice == "stats" or your_choice == "game stats":
         my_character.info_reading()
         your_choice = input(f"\n")
-    if your_choice == "start":
+    if your_choice == "start" or your_choice == "start game":
         my_character.health, ai_character.health = 100, 100
+        get_name()
         is_active = True
         main(is_active)
-    elif your_choice == "quit" or your_choice == "q":
+    elif your_choice == "quit" or your_choice == "q" or your_choice == "exit":
         is_active = False
         main(is_active)
+    elif your_choice == "change name" or your_choice == "change":
+        name = change_name()
+        my_character.name = name
+        starting_screen()
     else:
         print("Command was not recognised, restart the game! ")
 
@@ -206,7 +231,7 @@ starting_screen()
 # Show damage dealt as -##(DONE)
 # Instead of attack failing, should be enemy dodged attack(DONE)
 # When choosing move, show attack success rate percentage and possible damage dealt
-# Play again(DONE), save name
+# Play again, save name, should be able to change name(DONE)
 # Dynamic dashes (----) highlighting hp(maybe better formating)(DONE)
 # Dynamic stamina system, attacks drain stamina, can be recharged by skipping turn
 # Lithuanian language, input change_language or smth to change language
