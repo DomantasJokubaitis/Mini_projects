@@ -59,7 +59,7 @@ class Character:
             print(f"\n{defender.name} dodged the {attack_name.lower()} attack! ")
             self.show_hp(defender)
 
-    def get_info(self, game_end = 0, loss = 0, win = 0):
+    def get_info(self, game_end = 0, loss = 0, win = 0, punch = 0, kick = 0, body_slam = 0):
         path = Path("stats.json")
         if path.exists():
             content = path.read_text()
@@ -67,17 +67,26 @@ class Character:
             my_stats_dict["game_over_times"] += game_end
             my_stats_dict["losses"] += loss
             my_stats_dict["wins"] += win
+            my_stats_dict["punches"] += punch
+            my_stats_dict["kicks"] += kick
+            my_stats_dict["body_slams"] += body_slam
             content = json.dumps(my_stats_dict)
             path.write_text(content)
         else:
             my_stats_dict = {}
-            game_over_times, losses, wins = 0, 0, 0
+            game_over_times, losses, wins, punches, kicks, body_slams = 0, 0, 0, 0, 0, 0
             game_over_times += game_end
             losses += loss
             wins += win
+            punches += punch
+            kicks += kick
+            body_slams += body_slam
             my_stats_dict["game_over_times"] = game_over_times
             my_stats_dict["losses"] = losses
             my_stats_dict["wins"] = wins
+            my_stats_dict["punches"] = punches
+            my_stats_dict["kicks"] = kicks
+            my_stats_dict["body_slams"] = body_slams
             content = json.dumps(my_stats_dict)
             path.write_text(content)
 
@@ -85,27 +94,30 @@ class Character:
         path = Path("stats.json")
         content = path.read_text()
         my_stats_dict = json.loads(content)
-        print(f"\nIn total {my_stats_dict["game_over_times"]} games were played. You won {my_stats_dict["wins"]} of them and lost {my_stats_dict["losses"]} of them. ")
+        print(f"\nIn total {my_stats_dict["game_over_times"]} games were played. You won {my_stats_dict["wins"]} of them and lost {my_stats_dict["losses"]} of them.\n")  
+        print(f"You punched {my_stats_dict["punches"]} times, kicked {my_stats_dict["kicks"]} times and body slammed {my_stats_dict["body_slams"]} times.")
 
          
 
-    def punch(self):
+    def punches(self, punch = 0):
         self.attack(my_character, ai_character, "Punch", 20, 10, 20)
 
-    def kick(self):
-        self.attack(my_character, ai_character, "Kick", 50, 25, 35)
 
-    def body_slam(self):
+    def kicks(self, kick = 0):
+        self.attack(my_character, ai_character, "Kick", 50, 25, 35)
+    
+
+    def body_slams(self, body_slam = 0):
         self.attack(my_character, ai_character,"Body slam", 75, 45, 65)
 
 
-    def aipunch(self):
+    def aipunches(self):
         self.attack(ai_character, my_character, "Punch", 20, 10, 20)
 
-    def aikick(self):
+    def aikicks(self):
         self.attack(ai_character, my_character, "Kick", 50, 25, 35)
 
-    def aibody_slam(self):
+    def aibody_slams(self):
         self.attack(ai_character, my_character, "Body slam", 75, 45, 65)
 
 def get_name():
@@ -138,7 +150,12 @@ ai_character = Character("AI")
 
 is_active = True
 
+
 def main(is_active):
+
+    punch = 0
+    kick = 0
+    body_slam = 0
 
     while is_active == True:
 
@@ -146,27 +163,33 @@ def main(is_active):
 
             move = input(f"\nPunch, kick or body slam: ").lower()
             if move == "punch":
-                ai_character.punch()
+                ai_character.punches()
+                punch = 1
+                my_character.get_info(0,0,0,punch,0,0)
             elif move == "kick":
-                ai_character.kick()
+                ai_character.kicks()
+                kick = 1
+                my_character.get_info(0,0,0,0,kick,0)
             elif move == "body slam":
-                ai_character.body_slam()
+                ai_character.body_slams()
+                body_slam = 1
+                my_character.get_info(0,0,0,0,0,body_slam)
             else:
                 print(f"\nNot a legal move! {my_character.name} skips a turn! ")
                 ai_character.show_hp(ai_character)
             if ai_character.health > 0:
                 ai_move = random.randint(1,3)
                 if ai_move == 1:
-                    my_character.aipunch()
+                    my_character.aipunches()
                 elif ai_move == 2:
-                    my_character.aikick()
+                    my_character.aikicks()
                 elif ai_move == 3:
-                    my_character.aibody_slam()
+                    my_character.aibody_slams()
             
 
             if ai_character.health == 0:
                 print(f"\n{my_character.name} wins! ")
-                my_character.get_info(1, 0, 1)
+                my_character.get_info(1, 0, 1, punch, kick, body_slam)
                 choice = input("Play again? y/n: ").lower()
                 if choice == "y":
                     my_character.health, ai_character.health = 100, 100
@@ -191,7 +214,10 @@ def main(is_active):
 def starting_screen():
     your_choice = input("Start game / game stats / change name / quit: ").lower()
     if your_choice == "stats" or your_choice == "game stats":
-        my_character.info_reading()
+        try:
+            my_character.info_reading()
+        except FileNotFoundError:
+            print("You haven't played yet! ")
         your_choice = input(f"\n")
     if your_choice == "start" or your_choice == "start game":
         my_character.health, ai_character.health = 100, 100
@@ -222,7 +248,7 @@ starting_screen()
 ###bugs###
 
 # Ai can attack after it's health drops down to zero on the same turn (fixed)
-# when choosing 'n' to end the game, for some reason it ends only when there is a print line after the 'return is_active' line
+# when choosing 'n' to end the game, for some reason it ends only when there is a print line after the 'return is_active' line(fixed, n takes you to the starting screen)
 
 ###features###
 ##By importance, starting from the top##
@@ -236,7 +262,7 @@ starting_screen()
 # Dynamic stamina system, attacks drain stamina, can be recharged by skipping turn
 # Lithuanian language, input change_language or smth to change language
 # Healing (limited use, maybe potion?)
-# Store data about fight, like moves commited, in a file
+# Store data about fight, like moves commited, in a file(DONE, although failed moves also are stored[FIX])
 
 ###Swords and sandals ugly copy LOL
 
