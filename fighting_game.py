@@ -60,7 +60,9 @@ class Character:
             self.show_hp(defender)
 
     def get_info(self, game_end = 0, loss = 0, win = 0, punch = 0, kick = 0, body_slam = 0):
+        
         path = Path("stats.json")
+
         if path.exists():
             content = path.read_text()
             my_stats_dict = json.loads(content)
@@ -121,15 +123,20 @@ class Character:
         self.attack(ai_character, my_character, "Body slam", 75, 45, 65)
 
 def get_name():
+
     path = Path("character_name.json")
+
     if path.exists():
         content = path.read_text()
         name = json.loads(content)
         return name
+    
     else:
         name = input("Enter your characters nickname: ").title()
+
         while len(name) > 20:
             name = input("The name can be, at max, 20 characters long. Try again: ")
+
         content = json.dumps(name)
         path.write_text(content)
         return name
@@ -137,8 +144,10 @@ def get_name():
 def change_name():
     path = Path("character_name.json")
     name = input("Enter your characters nickname: ").title()
+
     while len(name) > 20:
         name = input("The name can be, at max, 20 characters long. Try again: ")
+
     content = json.dumps(name)
     path.write_text(content)
     return name
@@ -162,27 +171,35 @@ def main(is_active):
         while ai_character.health > 0 and my_character.health > 0:
 
             move = input(f"\nPunch, kick or body slam: ").lower()
+
             if move == "punch":
                 ai_character.punches()
                 punch = 1
                 my_character.get_info(0,0,0,punch,0,0)
+
             elif move == "kick":
                 ai_character.kicks()
                 kick = 1
                 my_character.get_info(0,0,0,0,kick,0)
+
             elif move == "body slam":
                 ai_character.body_slams()
                 body_slam = 1
                 my_character.get_info(0,0,0,0,0,body_slam)
+
             else:
                 print(f"\nNot a legal move! {my_character.name} skips a turn! ")
                 ai_character.show_hp(ai_character)
+
             if ai_character.health > 0:
                 ai_move = random.randint(1,3)
+
                 if ai_move == 1:
                     my_character.aipunches()
+
                 elif ai_move == 2:
                     my_character.aikicks()
+
                 elif ai_move == 3:
                     my_character.aibody_slams()
             
@@ -191,9 +208,11 @@ def main(is_active):
                 print(f"\n{my_character.name} wins! ")
                 my_character.get_info(1, 0, 1, punch, kick, body_slam)
                 choice = input("Play again? y/n: ").lower()
+
                 if choice == "y":
                     my_character.health, ai_character.health = 100, 100
                     main(is_active)
+
                 elif choice == "n":
                     starting_screen()
 
@@ -201,9 +220,11 @@ def main(is_active):
                 print(f"\nAi wins! ")
                 my_character.get_info(1, 1, 0)
                 choice = input("Play again? y/n: ").lower()
+
                 if choice == "y":
                     my_character.health, ai_character.health = 100, 100
                     main(is_active)
+
                 elif choice == "n":
                     starting_screen()
 
@@ -212,27 +233,42 @@ def main(is_active):
         sys.exit()
 
 def starting_screen():
-    your_choice = input("Start game / game stats / change name / quit: ").lower()
+
+    commands = {"Start" : "Starts the game", "stats" : "Shows various game statistics", "change name" : "changes character name", "help" : "shows all commands", "quit" : "quits the game"}
+    print()
+    your_choice = input("Start game / game stats / change name / help / quit: ").lower()
+    print()
+
     if your_choice == "stats" or your_choice == "game stats":
         try:
             my_character.info_reading()
         except FileNotFoundError:
             print("You haven't played yet! ")
         your_choice = input(f"\n")
+
     if your_choice == "start" or your_choice == "start game":
         my_character.health, ai_character.health = 100, 100
         get_name()
         is_active = True
         main(is_active)
+
+    elif your_choice == "help" or your_choice == "h":
+        for key, value in commands.items():
+            print(f"{key} : {value}")
+        starting_screen()
+
     elif your_choice == "quit" or your_choice == "q" or your_choice == "exit":
         is_active = False
         main(is_active)
+
     elif your_choice == "change name" or your_choice == "change":
         name = change_name()
         my_character.name = name
         starting_screen()
+
     else:
-        print("Command was not recognised, restart the game! ")
+        print("Command was not recognised! ")
+        starting_screen()
 
 
 starting_screen()
