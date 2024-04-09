@@ -189,19 +189,31 @@ def main(is_active):
             move = input(f"\nPunch, kick or body slam: ").lower()
 
             if move == "punch":
-                ai_character.punches()
-                punch = 1
-                my_character.get_info(0,0,0,punch,0,0)
+                if my_character.stamina > 0:
+                    ai_character.punches()
+                    punch = 1
+                    my_character.get_info(0,0,0,punch,0,0)
+                else:
+                    print("Stamina too low! Rest for a while")
+                    my_character.stamina += 50
 
             elif move == "kick":
-                ai_character.kicks()
-                kick = 1
-                my_character.get_info(0,0,0,0,kick,0)
+                if my_character.stamina > 0:
+                    ai_character.kicks()
+                    kick = 1
+                    my_character.get_info(0,0,0,0,kick,0)
+                else:
+                    print("Stamina too low! Rest for a while")
+                    my_character.stamina += 50
 
             elif move == "body slam":
-                ai_character.body_slams()
-                body_slam = 1
-                my_character.get_info(0,0,0,0,0,body_slam)
+                if my_character.stamina > 0:
+                    ai_character.body_slams()
+                    body_slam = 1
+                    my_character.get_info(0,0,0,0,0,body_slam)
+                else:
+                    print("Stamina too low! Rest for a while")
+                    my_character.stamina += 50
 
             else:
                 print(f"\nNot a legal move! {my_character.name} skips a turn! ")
@@ -211,13 +223,25 @@ def main(is_active):
                 ai_move = random.randint(1,3)
 
                 if ai_move == 1:
-                    my_character.aipunches()
+                    if ai_character.stamina > 0:
+                        my_character.aipunches()
+                    else:
+                        print(f"\nAi rests...")
+                        ai_character.stamina += 50
 
                 elif ai_move == 2:
-                    my_character.aikicks()
+                    if ai_character.stamina > 0:
+                        my_character.aikicks()
+                    else:
+                        print(f"\nAi rests...")
+                        ai_character.stamina += 50
 
                 elif ai_move == 3:
-                    my_character.aibody_slams()
+                    if ai_character.stamina > 0:
+                        my_character.aibody_slams()
+                    else:
+                        print(f"\nAi rests...")
+                        ai_character.stamina += 50
             
 
             if ai_character.health == 0:
@@ -227,6 +251,7 @@ def main(is_active):
 
                 if choice == "y":
                     my_character.health, ai_character.health = 100, 100
+                    my_character.stamina, ai_character.stamina = 100, 100
                     main(is_active)
 
                 elif choice == "n":
@@ -239,6 +264,7 @@ def main(is_active):
 
                 if choice == "y":
                     my_character.health, ai_character.health = 100, 100
+                    my_character.stamina, ai_character.stamina = 100, 100
                     main(is_active)
 
                 elif choice == "n":
