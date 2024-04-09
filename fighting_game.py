@@ -11,11 +11,30 @@ class Character:
         if self.name == "":
             self.name = "nameless"
         self.health = 100
+        self.stamina = 100
 
 
     def health_lowering(self, damage):
         """lowers the defenders health by damage dealt"""
         self.health -= damage
+
+    def show_hp(self, defender):
+        """shows the defenders health and a dynamic health bar"""
+        lines = round(defender.health * 0.4)
+        print(f"\n")
+        print(f"|{lines * "-"}|")
+        print(f"|{lines * "-"}|")
+
+        print(f"{defender.name} health: {defender.health} hp")
+
+    def stamina_lowering(self, tiredness):
+        self.stamina -= tiredness
+
+    def show_stamina(self, defender):
+        if defender.stamina < 0:
+            defender.stamina = 0
+        print(f"{defender.name} stamina: {defender.stamina}")
+
 
     def critical_hit(self, damage):
         """small chance for critical hit, which increases damage dealt 1.5 times"""
@@ -30,18 +49,12 @@ class Character:
 
         return self.damage
         
-    def show_hp(self, defender):
-        """shows the defenders health and a dynamic health bar"""
-        lines = round(defender.health * 0.4)
-        print(f"\n")
-        print(f"|{lines * "-"}|")
-        print(f"|{lines * "-"}|")
+    
 
-        print(f"{defender.name} health: {defender.health} hp")
-
-    def attack(self, attacker, defender, attack_name, fail_chance, min_damage, max_damage):
+    def attack(self, attacker, defender, attack_name, fail_chance, min_damage, max_damage, tiredness):
         """generates a random number from 1 to 100, if that number is bigger than the fail chance, damage is dealt to defender"""
         chance = random.randint(0, 100)
+        attacker.stamina_lowering(tiredness)
 
         if chance > fail_chance:
             print(f"\n{attacker.name} used {attack_name}! ")
@@ -52,12 +65,15 @@ class Character:
             if defender.health < 0:
                 defender.health = 0
                 self.show_hp(defender)
+                self.show_stamina(defender)
             else:
                 self.show_hp(defender)
+                self.show_stamina(defender)
 
         else:
             print(f"\n{defender.name} dodged the {attack_name.lower()} attack! ")
             self.show_hp(defender)
+            self.show_stamina(defender)
 
     def get_info(self, game_end = 0, loss = 0, win = 0, punch = 0, kick = 0, body_slam = 0):
         
@@ -102,25 +118,25 @@ class Character:
          
 
     def punches(self, punch = 0):
-        self.attack(my_character, ai_character, "Punch", 20, 10, 20)
+        self.attack(my_character, ai_character, "Punch", 20, 10, 20, 25)
 
 
     def kicks(self, kick = 0):
-        self.attack(my_character, ai_character, "Kick", 50, 25, 35)
+        self.attack(my_character, ai_character, "Kick", 50, 25, 35, 30)
     
 
     def body_slams(self, body_slam = 0):
-        self.attack(my_character, ai_character,"Body slam", 75, 45, 65)
+        self.attack(my_character, ai_character,"Body slam", 75, 45, 65, 35)
 
 
     def aipunches(self):
-        self.attack(ai_character, my_character, "Punch", 20, 10, 20)
+        self.attack(ai_character, my_character, "Punch", 20, 10, 20, 25)
 
     def aikicks(self):
-        self.attack(ai_character, my_character, "Kick", 50, 25, 35)
+        self.attack(ai_character, my_character, "Kick", 50, 25, 35, 30)
 
     def aibody_slams(self):
-        self.attack(ai_character, my_character, "Body slam", 75, 45, 65)
+        self.attack(ai_character, my_character, "Body slam", 75, 45, 65, 35)
 
 def get_name():
 
