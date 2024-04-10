@@ -21,7 +21,6 @@ class Character:
     def show_hp(self, defender):
         """shows the defenders health and a dynamic health bar"""
         lines = round(defender.health * 0.4)
-        print(f"\n")
         print(f"|{lines * "-"}|")
         print(f"|{lines * "-"}|")
 
@@ -186,7 +185,7 @@ def main(is_active):
 
         while ai_character.health > 0 and my_character.health > 0:
 
-            move = input(f"\nPunch, kick or body slam: ").lower()
+            move = input(f"\nPunch(Low dmg, high success)\nKick(Med. dmg, med. success\nBody slam(High dmg, low success)\n ").lower()
 
             if move == "punch":
                 if my_character.stamina > 0:
@@ -334,12 +333,10 @@ starting_screen()
 # Critical hits(DONE)
 # Show damage dealt as -##(DONE)
 # Instead of attack failing, should be enemy dodged attack(DONE)
-# When choosing move, show attack success rate percentage and possible damage dealt
+# When choosing move, show attack success rate percentage and possible damage dealt(DONE)
 # Play again, save name, should be able to change name(DONE)
 # Dynamic dashes (----) highlighting hp(maybe better formating)(DONE)
-# Dynamic stamina system, attacks drain stamina, can be recharged by skipping turn
-# Lithuanian language, input change_language or smth to change language
-# Healing (limited use, maybe potion?)
+# Dynamic stamina system, attacks drain stamina, can be recharged by skipping turn(DONE)
 # Store data about fight, like moves commited, in a file(DONE, although failed moves also are stored[FIX])
 
 ###Swords and sandals ugly copy LOL
