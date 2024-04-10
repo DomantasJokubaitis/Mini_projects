@@ -107,6 +107,8 @@ class Character:
             content = json.dumps(my_stats_dict)
             path.write_text(content)
 
+            """Need to make this mess prettier"""
+
     def info_reading(self):
         path = Path("stats.json")
         content = path.read_text()
@@ -249,7 +251,7 @@ def main(is_active):
                 choice = input("Play again? y/n: ").lower()
 
                 if choice == "y":
-                    my_character.health, ai_character.health = 100, 100
+                    my_character.health, ai_character.health = 100, 100 #should you function to restart game, resetting health and stamina
                     my_character.stamina, ai_character.stamina = 100, 100
                     main(is_active)
 
@@ -262,7 +264,7 @@ def main(is_active):
                 choice = input("Play again? y/n: ").lower()
 
                 if choice == "y":
-                    my_character.health, ai_character.health = 100, 100
+                    my_character.health, ai_character.health = 100, 100 
                     my_character.stamina, ai_character.stamina = 100, 100
                     main(is_active)
 
