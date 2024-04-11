@@ -47,6 +47,10 @@ class Character:
             print(f"Regular attack -{self.damage} hp")
 
         return self.damage
+    
+    def restore_everything(self):
+        my_character.health, ai_character.health = 100, 100 
+        my_character.stamina, ai_character.stamina = 100, 100
         
     
 
@@ -76,7 +80,7 @@ class Character:
 
     def get_info(self, game_end = 0, loss = 0, win = 0, punch = 0, kick = 0, body_slam = 0):
         
-        path = Path("stats.json")
+        path = Path("C:/Users/doman/Desktop/fighting_game/stats.json")
 
         if path.exists():
             content = path.read_text()
@@ -91,26 +95,18 @@ class Character:
             path.write_text(content)
         else:
             my_stats_dict = {}
-            game_over_times, losses, wins, punches, kicks, body_slams = 0, 0, 0, 0, 0, 0
-            game_over_times += game_end
-            losses += loss
-            wins += win
-            punches += punch
-            kicks += kick
-            body_slams += body_slam
-            my_stats_dict["game_over_times"] = game_over_times
-            my_stats_dict["losses"] = losses
-            my_stats_dict["wins"] = wins
-            my_stats_dict["punches"] = punches
-            my_stats_dict["kicks"] = kicks
-            my_stats_dict["body_slams"] = body_slams
+            my_stats_dict["game_over_times"] = game_end
+            my_stats_dict["losses"] = loss
+            my_stats_dict["wins"] = win
+            my_stats_dict["punches"] = punch
+            my_stats_dict["kicks"] = kick
+            my_stats_dict["body_slams"] = body_slam
             content = json.dumps(my_stats_dict)
             path.write_text(content)
 
-            """Need to make this mess prettier"""
 
     def info_reading(self):
-        path = Path("stats.json")
+        path = Path("C:/Users/doman/Desktop/fighting_game/stats.json")
         content = path.read_text()
         my_stats_dict = json.loads(content)
         print(f"\nIn total {my_stats_dict["game_over_times"]} games were played. You won {my_stats_dict["wins"]} of them and lost {my_stats_dict["losses"]} of them.\n")  
@@ -141,7 +137,7 @@ class Character:
 
 def get_name():
 
-    path = Path("character_name.json")
+    path = Path("C:/Users/doman/Desktop/fighting_game/character_name.json")
 
     if path.exists():
         content = path.read_text()
@@ -149,17 +145,10 @@ def get_name():
         return name
     
     else:
-        name = input("Enter your characters nickname: ").title()
-
-        while len(name) > 20:
-            name = input("The name can be, at max, 20 characters long. Try again: ")
-
-        content = json.dumps(name)
-        path.write_text(content)
-        return name
+        change_name()
     
 def change_name():
-    path = Path("character_name.json")
+    path = Path("C:/Users/doman/Desktop/fighting_game/character_name.json")
     name = input("Enter your characters nickname: ").title()
 
     while len(name) > 20:
@@ -187,7 +176,7 @@ def main(is_active):
 
         while ai_character.health > 0 and my_character.health > 0:
 
-            move = input(f"\nPunch(Low dmg, high success)\nKick(Med. dmg, med. success\nBody slam(High dmg, low success)\n ").lower()
+            move = input(f"\nPunch:80%|Kick:50%|Body slam:25%|  ").lower()
 
             if move == "punch":
                 if my_character.stamina > 0:
@@ -251,8 +240,7 @@ def main(is_active):
                 choice = input("Play again? y/n: ").lower()
 
                 if choice == "y":
-                    my_character.health, ai_character.health = 100, 100 #should you function to restart game, resetting health and stamina
-                    my_character.stamina, ai_character.stamina = 100, 100
+                    my_character.restore_everything()
                     main(is_active)
 
                 elif choice == "n":
@@ -264,8 +252,7 @@ def main(is_active):
                 choice = input("Play again? y/n: ").lower()
 
                 if choice == "y":
-                    my_character.health, ai_character.health = 100, 100 
-                    my_character.stamina, ai_character.stamina = 100, 100
+                    my_character.restore_everything()
                     main(is_active)
 
                 elif choice == "n":
@@ -290,7 +277,6 @@ def starting_screen():
         your_choice = input(f"\n")
 
     if your_choice == "start" or your_choice == "start game":
-        my_character.health, ai_character.health = 100, 100
         get_name()
         is_active = True
         main(is_active)
@@ -317,18 +303,6 @@ def starting_screen():
 starting_screen()
 
 
-   
-###needs###
-# alot of repetitive code, need to use more functions
-# should ask start or stats first, not for character name, but i need the character name to create a character instance and use stats function
-# start or stats need prettier formating
-
-
-###bugs###
-
-# Ai can attack after it's health drops down to zero on the same turn (fixed)
-# when choosing 'n' to end the game, for some reason it ends only when there is a print line after the 'return is_active' line(fixed, n takes you to the starting screen)
-
 ###features###
 ##By importance, starting from the top##
 
@@ -339,7 +313,7 @@ starting_screen()
 # Play again, save name, should be able to change name(DONE)
 # Dynamic dashes (----) highlighting hp(maybe better formating)(DONE)
 # Dynamic stamina system, attacks drain stamina, can be recharged by skipping turn(DONE)
-# Store data about fight, like moves commited, in a file(DONE, although failed moves also are stored[FIX])
+# Store data about fight, like moves commited, in a file(DONE, although failed moves also are stored)
 
 ###Swords and sandals ugly copy LOL
 
