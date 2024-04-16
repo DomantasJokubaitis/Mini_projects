@@ -67,11 +67,8 @@ class Character:
 
             if defender.health < 0:
                 defender.health = 0
-                self.show_hp(defender)
-                self.show_stamina(defender)
-            else:
-                self.show_hp(defender)
-                self.show_stamina(defender)
+            self.show_hp(defender)
+            self.show_stamina(defender)
 
         else:
             print(f"\n{defender.name} dodged the {attack_name.lower()} attack! ")
