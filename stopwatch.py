@@ -1,12 +1,17 @@
 import time
 
-try:
-    timer_set_to = input("Set the stopwatch time like hh:mm:ss  ")
-    hours, minutes, seconds = timer_set_to.split(":")
-    secs = int(hours) * 3600 + int(minutes) * 60 + int(seconds)
-except ValueError:
-    while ValueError:
-        timer_set_to = input("Ivalid format! Try again: ")
+
+while True:
+
+    try:
+        timer_set_to = input("Input hh:mm:ss  ")
+        hours, minutes, seconds = timer_set_to.split(":")
+        secs = int(hours) * 3600 + int(minutes) * 60 + int(seconds)
+        break
+
+    except ValueError:
+        print("Invalid format! ")
+        continue
 
 
 def seconds_to_time(seconds):
@@ -15,8 +20,6 @@ def seconds_to_time(seconds):
     seconds = seconds % 60
     return hours, minutes, seconds
 
-tick = 0.01
-x = 100
 
 while secs > 0:
     
