@@ -57,7 +57,7 @@ while isactive:
     def get_task():
         """the user gets to input a tasks and a deadline which is stored in the tasks dict"""
 
-        while 1:
+        while True:
 
             task = input(f"\nWhat task would you like to write down? ").title()
 
@@ -131,10 +131,6 @@ while isactive:
 
 
 
-"""currently pretty shitty, will come back to it"""
-#
-#
-#
 # writing the same tasks but on different days doesn't work
 # should be able to enter the tasks number to mark it as done
 # --- lines should seperate tasks based on due days
