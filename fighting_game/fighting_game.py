@@ -184,7 +184,7 @@ def main(is_active):
                     punch = 1
                     my_character.get_info(0,0,0,punch,0,0)
                 else:
-                    print("Stamina too low! Rest for a while")
+                    print("No stamina")
                     my_character.stamina += 50
 
             elif move == "kick":
@@ -193,7 +193,7 @@ def main(is_active):
                     kick = 1
                     my_character.get_info(0,0,0,0,kick,0)
                 else:
-                    print("Stamina too low! Rest for a while")
+                    print("No stamina")
                     my_character.stamina += 50
 
             elif move == "body slam":
@@ -202,7 +202,7 @@ def main(is_active):
                     body_slam = 1
                     my_character.get_info(0,0,0,0,0,body_slam)
                 else:
-                    print("Stamina too low! Rest for a while")
+                    print("No stamina")
                     my_character.stamina += 50
 
             else:
