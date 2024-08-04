@@ -1,7 +1,5 @@
-import random
-import json
+import random, json, sys
 from pathlib import Path
-import sys
 
 class Character:
 
@@ -14,29 +12,30 @@ class Character:
         self.stamina = 100
 
 
-    def health_lowering(self, damage):
+    def health_lowering(self, damage) -> None:
         """lowers the defenders health by damage dealt"""
+
         self.health -= damage
 
-    def show_hp(self, defender):
+    def show_hp(self, defender) -> None:
         """shows the defenders health and a dynamic health bar"""
-        lines = round(defender.health * 0.4)
-        print(f"|{lines * "-"}|")
-        print(f"|{lines * "-"}|")
 
+        lines = round(defender.health * 0.4)
+        print(f"|{lines * "="}|")
         print(f"{defender.name} health: {defender.health} hp")
 
-    def stamina_lowering(self, tiredness):
+    def stamina_lowering(self, tiredness) -> None:
         self.stamina -= tiredness
 
-    def show_stamina(self, defender):
+    def show_stamina(self, defender) -> None:
         if defender.stamina < 0:
             defender.stamina = 0
         print(f"{defender.name} stamina: {defender.stamina}")
 
 
-    def critical_hit(self, damage):
+    def critical_hit(self, damage) -> int:
         """small chance for critical hit, which increases damage dealt 1.5 times"""
+
         self.damage = damage
         critical_chance = random.randint(1, 100)
 
@@ -44,18 +43,18 @@ class Character:
             self.damage = round(self.damage * 1.5)
             print(f"Critical hit! -{self.damage} hp")
         else:
-            print(f"Regular attack -{self.damage} hp")
+            print(f"-{self.damage} hp")
 
         return self.damage
     
-    def restore_everything(self):
+    def restore_everything(self) -> None:
         my_character.health, ai_character.health = 100, 100 
         my_character.stamina, ai_character.stamina = 100, 100
         
-    
 
-    def attack(self, attacker, defender, attack_name, fail_chance, min_damage, max_damage, tiredness):
+    def attack(self, attacker, defender, attack_name, fail_chance, min_damage, max_damage, tiredness) -> None:
         """generates a random number from 1 to 100, if that number is bigger than the fail chance, damage is dealt to defender"""
+
         chance = random.randint(0, 100)
         attacker.stamina_lowering(tiredness)
 
@@ -78,84 +77,96 @@ class Character:
             self.show_hp(defender)
             self.show_stamina(defender)
 
-    def get_info(self, game_end = 0, loss = 0, win = 0, punch = 0, kick = 0, body_slam = 0):
-        
-        path = Path("fighting_game/stats.json")
 
-        if path.exists():
-            content = path.read_text()
-            my_stats_dict = json.loads(content)
-            my_stats_dict["game_over_times"] += game_end
-            my_stats_dict["losses"] += loss
-            my_stats_dict["wins"] += win
-            my_stats_dict["punches"] += punch
-            my_stats_dict["kicks"] += kick
-            my_stats_dict["body_slams"] += body_slam
-            content = json.dumps(my_stats_dict)
-            path.write_text(content)
-        else:
-            my_stats_dict = {}
-            my_stats_dict["game_over_times"] = game_end
-            my_stats_dict["losses"] = loss
-            my_stats_dict["wins"] = win
-            my_stats_dict["punches"] = punch
-            my_stats_dict["kicks"] = kick
-            my_stats_dict["body_slams"] = body_slam
-            content = json.dumps(my_stats_dict)
-            path.write_text(content)
+    def punches(self) -> None:
+        """puch attack on the ai"""
 
-
-    def info_reading(self):
-        path = Path("fighting_game/stats.json")
-        content = path.read_text()
-        my_stats_dict = json.loads(content)
-        print(f"\nIn total {my_stats_dict["game_over_times"]} games were played. You won {my_stats_dict["wins"]} of them and lost {my_stats_dict["losses"]} of them.\n")  
-        print(f"You punched {my_stats_dict["punches"]} times, kicked {my_stats_dict["kicks"]} times and body slammed {my_stats_dict["body_slams"]} times.")
-
-         
-
-    def punches(self, punch = 0):
         self.attack(my_character, ai_character, "Punch", 20, 10, 20, 25)
 
+    def kicks(self) -> None:
+        """kick attack on the ai"""
 
-    def kicks(self, kick = 0):
         self.attack(my_character, ai_character, "Kick", 50, 25, 35, 30)
     
-
-    def body_slams(self, body_slam = 0):
+    def body_slams(self) -> None:
+        """body slam attack on the ai"""
         self.attack(my_character, ai_character,"Body slam", 75, 45, 65, 35)
 
 
-    def aipunches(self):
+    def aipunches(self) -> None:
+        """punch attack on player"""
+
         self.attack(ai_character, my_character, "Punch", 20, 10, 20, 25)
 
-    def aikicks(self):
+    def aikicks(self) -> None:
+        """kick attack on player"""
+
         self.attack(ai_character, my_character, "Kick", 50, 25, 35, 30)
 
-    def aibody_slams(self):
+    def aibody_slams(self) -> None:
+        """body slam attack on player"""
+
         self.attack(ai_character, my_character, "Body slam", 75, 45, 65, 35)
 
-def get_name():
+stats_path = Path("stats.json")
 
-    path = Path("fighting_game/character_name.json")
+def get_info(total_games = 0, loss = 0, win = 0, punch = 0, kick = 0, body_slam = 0) -> None:
+    """stores info about game"""    
 
-    if path.exists():
-        content = path.read_text()
+    if stats_path.exists():
+        content = stats_path.read_text()
+        my_stats_dict = json.loads(content)
+        my_stats_dict["total_games"] += total_games
+        my_stats_dict["losses"] += loss
+        my_stats_dict["wins"] += win
+        my_stats_dict["punches"] += punch
+        my_stats_dict["kicks"] += kick
+        my_stats_dict["body_slams"] += body_slam
+        content = json.dumps(my_stats_dict)
+        stats_path.write_text(content)
+    else:                                                       # what an ugly piece of code
+        my_stats_dict = {}
+        my_stats_dict["total_games"] = total_games
+        my_stats_dict["losses"] = loss
+        my_stats_dict["wins"] = win
+        my_stats_dict["punches"] = punch
+        my_stats_dict["kicks"] = kick
+        my_stats_dict["body_slams"] = body_slam
+        content = json.dumps(my_stats_dict)
+        stats_path.write_text(content)
+
+
+def info_reading() -> None:
+    """gets info about previous games"""
+
+    content = stats_path.read_text()
+    my_stats_dict = json.loads(content)
+    print(f"\nin total {my_stats_dict["total_games"]} games were played. you won {my_stats_dict["wins"]} of them and lost {my_stats_dict["losses"]} of them.\n")  
+    print(f"You punched {my_stats_dict["punches"]} times, kicked {my_stats_dict["kicks"]} times and body slammed {my_stats_dict["body_slams"]} times.")
+
+name_path = Path("character_name.json")
+
+def get_name() -> str:
+    """gets the characters name if it exists"""
+
+    if name_path.exists():
+        content = name_path.read_text()
         name = json.loads(content)
         return name
     
     else:
         change_name()
     
-def change_name():
-    path = Path("fighting_game/character_name.json")
+def change_name() -> str:
+    """changes the characters name"""
+
     name = input("Enter your characters nickname: ").title()
 
     while len(name) > 20:
         name = input("The name can be, at max, 20 characters long. Try again: ")
 
     content = json.dumps(name)
-    path.write_text(content)
+    name_path.write_text(content)
     return name
 
 name = get_name()
@@ -163,162 +174,117 @@ name = get_name()
 my_character = Character(name)
 ai_character = Character("AI")
 
-is_active = True
 
+def fighting_logic(is_active):
 
-def main(is_active):
-
-    punch = 0
-    kick = 0
-    body_slam = 0
+    punch, kick, body_slam = 0, 0, 0       # this is done to track stats
 
     while is_active == True:
 
         while ai_character.health > 0 and my_character.health > 0:
-
-            move = input(f"\nPunch:80% | Kick:50% | Body slam:25%  ").lower()
-
-            if move == "punch":
-                if my_character.stamina > 0:
-                    ai_character.punches()
-                    punch = 1
-                    my_character.get_info(0,0,0,punch,0,0)
-                else:
-                    print("No stamina")
-                    my_character.stamina += 50
-
-            elif move == "kick":
-                if my_character.stamina > 0:
-                    ai_character.kicks()
-                    kick = 1
-                    my_character.get_info(0,0,0,0,kick,0)
-                else:
-                    print("No stamina")
-                    my_character.stamina += 50
-
-            elif move == "body slam":
-                if my_character.stamina > 0:
-                    ai_character.body_slams()
-                    body_slam = 1
-                    my_character.get_info(0,0,0,0,0,body_slam)
-                else:
-                    print("No stamina")
-                    my_character.stamina += 50
+            if my_character.stamina == 0:
+                print(f"\nResting...")
+                my_character.stamina += 50
 
             else:
-                print(f"\nNot a legal move! {my_character.name} skips a turn! ")
-                ai_character.show_hp(ai_character)
+                move = input(f"\nPunch:80% | Kick:50% | Body slam:25%  ").lower()
+
+                if move == "punch":
+                    ai_character.punches()
+                    punch += 1
+
+                elif move == "kick":
+                    ai_character.kicks()
+                    kick += 1
+
+                elif move == "body slam":
+                    ai_character.body_slams()
+                    body_slam += 1
+
+                else:
+                    print(f"\nNot a legal move! {my_character.name} skips a turn! ")
+                    ai_character.show_hp(ai_character)
+
 
             if ai_character.health > 0:
-                ai_move = random.randint(1,3)
+                if ai_character.stamina == 0:
+                    print(f"\nAi rests...")
+                    ai_character.stamina += 50
 
-                if ai_move == 1:
-                    if ai_character.stamina > 0:
+                else:
+                    ai_move = random.randint(1,3)
+
+                    if ai_move == 1:
                         my_character.aipunches()
-                    else:
-                        print(f"\nAi rests...")
-                        ai_character.stamina += 50
 
-                elif ai_move == 2:
-                    if ai_character.stamina > 0:
+                    elif ai_move == 2:
                         my_character.aikicks()
-                    else:
-                        print(f"\nAi rests...")
-                        ai_character.stamina += 50
-
-                elif ai_move == 3:
-                    if ai_character.stamina > 0:
+                        
+                    elif ai_move == 3:
                         my_character.aibody_slams()
-                    else:
-                        print(f"\nAi rests...")
-                        ai_character.stamina += 50
-            
+                
 
             if ai_character.health == 0:
                 print(f"\n{my_character.name} wins! ")
-                my_character.get_info(1, 0, 1, punch, kick, body_slam)
+                get_info(1, 0, 1, punch, kick, body_slam)
                 choice = input("Play again? y/n: ").lower()
 
                 if choice == "y":
                     my_character.restore_everything()
-                    main(is_active)
+                    fighting_logic(True)
 
                 elif choice == "n":
-                    starting_screen()
+                    main()
 
             elif my_character.health == 0:
                 print(f"\nAi wins! ")
-                my_character.get_info(1, 1, 0)
+                get_info(1, 1, 0, punch, kick, body_slam)
                 choice = input("Play again? y/n: ").lower()
 
                 if choice == "y":
                     my_character.restore_everything()
-                    main(is_active)
+                    fighting_logic(True)
 
                 elif choice == "n":
-                    starting_screen()
-
-    else:
-        print("Quitting...")
-        sys.exit()
-
-def starting_screen():
-
-    commands = {"Start" : "Starts the game", "stats" : "Shows various game statistics", "change name" : "changes character name", "help" : "shows all commands", "quit" : "quits the game"}
-    print()
-    your_choice = input("Start game / game stats / change name / help / quit: ").lower()
-    print()
-
-    if your_choice == "stats" or your_choice == "game stats":
-        try:
-            my_character.info_reading()
-        except FileNotFoundError:
-            print("You haven't played yet! ")
-        your_choice = input(f"\n")
-
-    if your_choice == "start" or your_choice == "start game":
-        get_name()
-        is_active = True
-        main(is_active)
-
-    elif your_choice == "help" or your_choice == "h":
-        for key, value in commands.items():
-            print(f"{key} : {value}")
-        starting_screen()
-
-    elif your_choice == "quit" or your_choice == "q" or your_choice == "exit":
-        is_active = False
-        main(is_active)
-
-    elif your_choice == "change name" or your_choice == "change":
-        name = change_name()
-        my_character.name = name
-        starting_screen()
-
-    else:
-        print("Command was not recognised! ")
-        starting_screen()
+                    main()
 
 
-starting_screen()
+def main():
+    """acts as a menu"""
 
+    commands = {"Start" : "Starts the game",
+                "stats" : "Shows various game statistics",
+                "change name" : "changes character name", 
+                "help" : "shows all commands",
+                "quit" : "quits the game"}
+    
+    while True:
+        your_choice = input(f"\nStart game / Game stats / Change name / Help / Quit: \n").lower()
 
-###features###
-##By importance, starting from the top##
+        if your_choice == "start" or your_choice == "start game":
+            get_name()
+            fighting_logic(True)
 
-# Critical hits(DONE)
-# Show damage dealt as -##(DONE)
-# Instead of attack failing, should be enemy dodged attack(DONE)
-# When choosing move, show attack success rate percentage and possible damage dealt(DONE)
-# Play again, save name, should be able to change name(DONE)
-# Dynamic dashes (----) highlighting hp(maybe better formating)(DONE)
-# Dynamic stamina system, attacks drain stamina, can be recharged by skipping turn(DONE)
-# Store data about fight, like moves commited, in a file(DONE, although failed moves also are stored)
+        elif your_choice == "stats" or your_choice == "game stats":
+            try:
+                info_reading()
+            except FileNotFoundError:
+                print("You haven't played yet! ")
 
-###Swords and sandals ugly copy LOL
+        elif your_choice == "change name" or your_choice == "change":
+            name = change_name()
+            my_character.name = name
 
+        elif your_choice == "help" or your_choice == "h":
+            for key, value in commands.items():
+                print(f"{key.title()} : {value.title()}")
 
+        elif your_choice == "quit" or your_choice == "q" or your_choice == "exit":
+            print("Quitting...")
+            sys.exit()
 
+        else:
+            print("Command was not recognised! ")
 
-
-
+if __name__ == "__main__":
+    main()
